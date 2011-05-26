@@ -1,14 +1,14 @@
 <?php
 
 /*
-	[UCenter] (C)2001-2009 Comsenz Inc.
+	[UCenter] (C)2001-2099 Comsenz Inc.
 	This is NOT a freeware, use is subject to license terms
 
-	$Id: upgrade1.php 12117 2008-01-11 06:25:08Z heyond $
+	$Id: upgrade_1.0.0Beta_1.0.0.php 1080 2011-04-07 01:19:42Z svn_project_zhangjie $
 */
 
 define("IN_UC", TRUE);
-define('UC_ROOT', substr(__FILE__, 0, -12));
+define('UC_ROOT', realpath('.').'/');
 
 $version_old = 'UCenter 1.0 Beta';
 $version_new = 'UCenter 1.0';
@@ -131,7 +131,7 @@ if(!$action) {
 	if(empty($_POST['password'])) {
 		showheader();
 		echo '<br /><br /><h3>升級程序需要重置創始人密碼，賬號為系統內置，請牢記密碼。</h3>';
-		echo '<form action="upgrade1.php?action=updatepw" method="post">';
+		echo '<form action="upgrade_1.0.0Beta_1.0.0.php?action=updatepw" method="post">';
 		echo '創始人賬號：<input type="text" name="founder" disabled="disabled" value="UCenterAdministrator" /><br />';
 		echo '創始人密碼：<input type="password" name="password" /><br />';
 		echo '　重複密碼：<input type="password" name="password2" /><br />';
@@ -156,7 +156,7 @@ if(!$action) {
 		$fp = fopen(UC_CONFIG, 'w');
 		fwrite($fp, $config);
 		fclose($fp);
-		header("Location:upgrade1.php?action=db");
+		header("Location:upgrade_1.0.0Beta_1.0.0.php?action=db");
 	}
 
 } elseif($action == 'db') {
@@ -171,7 +171,7 @@ if(!$action) {
 	@mkdir(UC_ROOT.'./data/backup', 0777);
 	dir_clear(UC_ROOT.'./data/view');
 
-	echo "升級完成。請刪除掉 upgrade1.php";
+	echo "升級完成。請刪除掉 upgrade_1.0.0Beta_1.0.0.php";
 	showfooter();
 
 }

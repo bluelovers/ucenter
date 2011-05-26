@@ -1,14 +1,14 @@
 <?php
 
 /*
-	[UCenter] (C)2001-2009 Comsenz Inc.
+	[UCenter] (C)2001-2099 Comsenz Inc.
 	This is NOT a freeware, use is subject to license terms
 
-	$Id: upgrade1.php 12117 2008-01-11 06:25:08Z heyond $
+	$Id: upgrade_1.0.0_1.5.0.php 1080 2011-04-07 01:19:42Z svn_project_zhangjie $
 */
 
 define("IN_UC", TRUE);
-define('UC_ROOT', realpath('..').'/');
+define('UC_ROOT', realpath('.').'/');
 
 $version_old = 'UCenter 1.0';
 $version_new = 'UCenter 1.5';
@@ -102,7 +102,7 @@ if(!$action) {
 	@touch(UC_ROOT.'./data/install.lock');
 	@unlink(UC_ROOT.'./install/index.php');
 
-	$db = new db;
+	$db = new ucserver_db();
 	$db->connect(UC_DBHOST, UC_DBUSER, UC_DBPW, UC_DBNAME, UC_DBCHARSET);
 
 	runquery($sql);
@@ -114,6 +114,7 @@ if(!$action) {
 		@rmdir(UC_ROOT.'./plugin/setting');
 	}
 
+	//note 升級uc_applications.viewprourl
 	$db->query("UPDATE ".UC_DBTABLEPRE."applications SET viewprourl='/space.php?uid=%s'");
 	$query = $db->query("SELECT * FROM ".UC_DBTABLEPRE."applications");
 	while($app = $db->fetch_array($query)) {
@@ -123,7 +124,7 @@ if(!$action) {
 		$db->query("UPDATE ".UC_DBTABLEPRE."applications SET authkey='$authkey' WHERE appid='$appid'");
 	}
 
-	header("Location: upgrade2.php?action=pm&forward=".urlencode($forward));
+	header("Location: upgrade_1.0.0_1.5.0.php?action=pm&forward=".urlencode($forward));
 
 } elseif($action == 'pm') {
 
@@ -131,7 +132,7 @@ if(!$action) {
 
 	echo "<h4>處理短消息數據</h4>";
 
-	$db = new db;
+	$db = new ucserver_db();
 	$db->connect(UC_DBHOST, UC_DBUSER, UC_DBPW, UC_DBNAME, UC_DBCHARSET);
 
 	$total = getgpc('total');
@@ -142,7 +143,7 @@ if(!$action) {
 	}
 
 	if(!$total || $total <= $start) {
-		$db->query("REPLACE INTO ".UC_DBTABLEPRE."settings (k, v) VALUES('version', '1.5.0')");
+		$db->query("REPLACE INTO ".UC_DBTABLEPRE."settings (k, v) VALUES('version', '1.5.0')");//note 記錄數據庫版本
 		@touch($lock_file);
 		if($forward) {
 			echo "<br /><br /><br /><a href=\"$forward\">瀏覽器會自動跳轉頁面，無需人工干預。除非當您的瀏覽器長時間沒有自動跳轉時，請點擊這裡</a>";
@@ -163,7 +164,7 @@ if(!$action) {
 	
 		$end = $start + $limit;
 		echo "短消息數據已處理 $start / $total ...";
-		$url_forward = "upgrade2.php?action=pm&start=$end&total=$total&forward=".urlencode($forward);
+		$url_forward = "upgrade_1.0.0_1.5.0.php?action=pm&start=$end&total=$total&forward=".urlencode($forward);
 		echo "<br /><br /><br /><a href=\"$url_forward\">瀏覽器會自動跳轉頁面，無需人工干預。除非當您的瀏覽器長時間沒有自動跳轉時，請點擊這裡</a>";
 		echo "<script>setTimeout(\"redirect('$url_forward');\", 1250);</script>";
 	}
@@ -187,7 +188,7 @@ if(!$action) {
 			exit;
 		} else {
 			setcookie('uc_authcode', authcode(UC_FOUNDERPW, 'ENCODE', UC_KEY));
-			header("Location: upgrade2.php?action=upgsecques");
+			header("Location: upgrade_1.0.0_1.5.0.php?action=upgsecques");
 			exit;
 		}
 	}
@@ -211,7 +212,7 @@ if(!$action) {
 	};
 
 	$dump_file = UC_ROOT.'./data/upgsecques/secques_'.$random.'_'.$num.'.sql';
-	if(!file_exists($dump_file)) {
+	if(!file_exists($dump_file)) {//note 升級完畢
 		@touch($lock_file);
 		dir_clear(UC_ROOT.'./data/upgsecques');
 		setcookie('uc_authcode', '');
@@ -220,12 +221,12 @@ if(!$action) {
 	} else {
 		showheader();
 		$sql = file_get_contents($dump_file);
-		$db = new db;
+		$db = new ucserver_db();
 		$db->connect(UC_DBHOST, UC_DBUSER, UC_DBPW, UC_DBNAME, UC_DBCHARSET);
 		runquery($sql);
 		$num++;
 		echo "安全提問正在導入";
-		$url_forward = "upgrade2.php?action=upgsecques&num=$num&random=$random";
+		$url_forward = "upgrade_1.0.0_1.5.0.php?action=upgsecques&num=$num&random=$random";
 		echo "<br /><br /><br /><a href=\"$url_forward\">瀏覽器會自動跳轉頁面，無需人工干預。除非當您的瀏覽器長時間沒有自動跳轉時，請點擊這裡</a>";
 		echo "<script>setTimeout(\"redirect('$url_forward');\", 1250);</script>";
 	}
