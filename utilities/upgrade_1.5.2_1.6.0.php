@@ -360,9 +360,47 @@ if(!$action) {
 			$pmsarr['msgfrom'] = addslashes($pmsarr['msgfrom']);
 			$pmsarr['subject'] = addslashes($pmsarr['subject']);
 			$pmsarr['message'] = addslashes($pmsarr['message']);
+			/*
 			if($pmsarr['subject'] && strcmp($pmsarr['subject'], $pmsarr['message'])) {
 				$pmsarr['message'] = $pmsarr['subject']."\n".$pmsarr['message'];
 			}
+			*/
+			// bluelovers
+			if ($pmsarr['subject']) {
+				// 將 message 轉為單行做為比對
+				$pmsarr['message_oneline'] = trim(str_replace(array("\r\n", "\n"), '', $pmsarr['message']));
+				// 防止因 htmlspecialchars 造成錯誤判斷
+				$pmsarr['message_oneline2'] = htmlspecialchars($pmsarr['message_oneline']);
+				// 防止因 removecode 造成錯誤判斷
+				$pmsarr['message_oneline3'] = trim(removecode($pmsarr['message_oneline'], 350));
+
+				// 防止自動截斷時添加的 ...
+				$pmsarr['subject2'] = preg_replace('/[\s\.]+$/', '', $pmsarr['subject']);
+
+				// 檢查 subject 與 message 的關係是否為 message 的自動截斷
+				$pmsarr['_tmp_pos'] = strpos($pmsarr['message_oneline'], $pmsarr['subject2']);
+				$pmsarr['_tmp_pos2'] = strpos($pmsarr['message_oneline2'], $pmsarr['subject2']);
+				$pmsarr['_tmp_pos3'] = strpos($pmsarr['message_oneline3'], $pmsarr['subject2']);
+
+				if (
+					$pmsarr['subject'] != $pmsarr['message_oneline']
+					&& $pmsarr['subject'] != htmlspecialchars($pmsarr['message_oneline'])
+					&& $pmsarr['subject2'] != $pmsarr['message_oneline']
+					&& $pmsarr['subject2'] != htmlspecialchars($pmsarr['message_oneline'])
+					&& ($pmsarr['_tmp_pos'] === false || $pmsarr['_tmp_pos'] > 0)
+					&& ($pmsarr['_tmp_pos2'] === false || $pmsarr['_tmp_pos2'] > 0)
+					&& ($pmsarr['_tmp_pos3'] === false || $pmsarr['_tmp_pos3'] > 0)
+				) {
+					$pmsarr['message'] = $pmsarr['subject2']."\n".$pmsarr['message'];
+				}
+
+//				if ($data[plid] == 50) {
+//					echo '<pre>';
+//					print_r($pmsarr);
+//					exit();
+//				}
+			}
+			// bluelovers
 			if($users[0] == $data['authorid']) {
 				$touid = $users[1];
 			} else {
