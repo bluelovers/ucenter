@@ -315,7 +315,7 @@ if(!$action) {
 			}
 			$db->query("INSERT INTO ".UC_DBTABLEPRE.getposttablename($plid)."(pmid, plid, authorid, message, delstatus, dateline) VALUES('$pmid', '$plid', '$data[msgfromid]', '".$data['message']."', '$delstatus', '$data[dateline]')");
 		}
-	
+
 		if($next > 0) {
 			$end = $next;
 			echo "短消息數據已處理 $start / $total ...";
@@ -361,7 +361,7 @@ if(!$action) {
 			$pmsarr['subject'] = addslashes($pmsarr['subject']);
 			$pmsarr['message'] = addslashes($pmsarr['message']);
 			if($pmsarr['subject'] && strcmp($pmsarr['subject'], $pmsarr['message'])) {
-				$pmsarr['message'] = $pmsarr['subject']."\r\n".$pmsarr['message'];
+				$pmsarr['message'] = $pmsarr['subject']."\n".$pmsarr['message'];
 			}
 			if($users[0] == $data['authorid']) {
 				$touid = $users[1];
@@ -386,7 +386,7 @@ if(!$action) {
 			}
 		}
 	}
-	
+
 	if($next > 0) {
 		$end = $next;
 		echo "短消息其它數據已處理 $start / $total ...";
